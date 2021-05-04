@@ -1,0 +1,103 @@
+substitutions:
+  dev_name: smartlife_10521cc73794
+
+esphome:
+  name: ${dev_name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret ssid
+  password: !secret passwd
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${dev_name}
+    password: "12345678"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: "12345678"
+
+ota:
+  password: "12345678"
+  
+status_led:
+  pin: 1
+
+switch:
+  - platform: restart
+    name: b10521cc73794_restart
+
+output:
+  - platform: gpio
+    pin: 12
+    id: ${dev_name}_relay_1
+  - platform: gpio
+    pin: 13
+    id: ${dev_name}_relay_2
+  - platform: gpio
+    pin: 14
+    id: ${dev_name}_relay_3
+
+light:
+  - platform: binary
+    name: ${dev_name}_light_1
+    id: ${dev_name}_light_1
+    output: ${dev_name}_relay_1
+    restore_mode: RESTORE_DEFAULT_OFF
+  - platform: binary
+    name: ${dev_name}_light_2
+    id: ${dev_name}_light_2
+    output: ${dev_name}_relay_2
+    restore_mode: RESTORE_DEFAULT_OFF
+  - platform: binary
+    name: ${dev_name}_light_3
+    id: ${dev_name}_light_3
+    output: ${dev_name}_relay_3
+    restore_mode: RESTORE_DEFAULT_OFF
+    
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: 5
+      mode: INPUT_PULLUP
+      inverted: True
+    id: ${dev_name}_button_1
+    on_press:
+      light.toggle: ${dev_name}_light_1
+      
+  - platform: gpio
+    pin:
+      number: 3
+      mode: INPUT_PULLUP
+      inverted: True
+    id: ${dev_name}_button_2
+    on_press:
+      light.toggle: ${dev_name}_light_2
+      
+  - platform: gpio
+    pin:
+      number: 4
+      mode: INPUT_PULLUP
+      inverted: True
+    id: ${dev_name}_button_3
+    on_press:
+      light.toggle: ${dev_name}_light_3
+        
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ${dev_name}_ip
+      icon: "mdi:lan"
+    ssid:
+      name: ${dev_name}_ssid
+      icon: "mdi:wifi"
+    mac_address:
+      name: ${dev_name}_mac
+      icon: "mdi:lan"
