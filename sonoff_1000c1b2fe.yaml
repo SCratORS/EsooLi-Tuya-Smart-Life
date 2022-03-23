@@ -1,0 +1,64 @@
+substitutions:
+  dev_name: sonoff_1000c1b2fe
+
+esphome:
+  name: ${dev_name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret ssid
+  password: !secret passwd
+
+  ap:
+    ssid: ${dev_name}
+    password: "12345678"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: "12345678"
+
+ota:
+  password: "12345678"
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: True
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    id: hardware_button
+    on_press:
+      switch.toggle: relay
+    
+switch:
+  - platform: restart
+    name: ${dev_name}_restart
+  - platform: gpio
+    name: ${dev_name}_relay
+    pin: GPIO12
+    id: relay
+    restore_mode: ALWAYS_OFF
+    
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ${dev_name}_ip
+      icon: "mdi:lan"
+    ssid:
+      name: ${dev_name}_ssid
+      icon: "mdi:wifi"
+    mac_address:
+      name: ${dev_name}_mac
+      icon: "mdi:lan"
+
